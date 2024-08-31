@@ -1,7 +1,7 @@
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import AddTask from './AddTask'
 import Task from './Task'
+import api from './api/api'
 
 export default function TaskApp() {
   const [tasks, setTasks] = useState([])
@@ -10,7 +10,7 @@ export default function TaskApp() {
   async function handleAddTask(task) {
     //& here we post a data to the tasks using axios.post method and it will return a response that we will set in the state.
     try {
-      const response = await axios.post(`http://localhost:8000/items`, {
+      const response = await api.post(`/items`, {
         id: crypto.randomUUID(),
         name: task,
       })
@@ -24,10 +24,7 @@ export default function TaskApp() {
   async function handleEditTask(task) {
     //* here we update the task using axios.put method and it will return a response that we will set in the state.
     try {
-      const response = await axios.put(
-        `http://localhost:8000/items/${task.id}`,
-        task
-      )
+      const response = await api.put(`/items/${task.id}`, task)
       if (response && response.data) {
         setTasks(
           tasks.map((t) => {
@@ -46,7 +43,7 @@ export default function TaskApp() {
     // * here we delete the task using axios.delete method and it will delete from server and ui part updates manually
     if (confirm('Are you sure you want to delete this task?')) {
       try {
-        await axios.delete(`http://localhost:8000/items/${taskId}`)
+        await api.delete(`/items/${taskId}`)
         setTasks(tasks.filter((task) => task.id !== taskId))
       } catch (error) {
         setError(error)
@@ -59,7 +56,7 @@ export default function TaskApp() {
       //* get data from server using axios.get method and it will return a list of tasks that we will set in the state.
 
       try {
-        const response = await axios.get(`http://localhost:8000/items`)
+        const response = await api.get(`/items`)
         if (response && response.data) {
           setTasks(response.data)
         }
